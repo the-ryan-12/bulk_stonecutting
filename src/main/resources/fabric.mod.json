@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "bulk_stonecutting",
+  "version": "${version}",
+  "name": "bulk_stonecutting",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/bulk_stonecutting/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "org.vee.bulk_stonecutting.client.Bulk_stonecuttingClient"
+    ],
+    "main": [
+      "org.vee.bulk_stonecutting.Bulk_stonecutting"
+    ]
+  },
+  "mixins": [
+    "bulk_stonecutting.mixins.json",
+    {
+      "config": "bulk_stonecutting.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

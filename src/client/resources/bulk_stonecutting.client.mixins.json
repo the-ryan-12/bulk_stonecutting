@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.vee.bulk_stonecutting.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "HandledScreenAccessor",
+    "StonecutterMouseMixin",
+    "StonecutterScreenMixin",
+    "CheckboxWidgetResizableMixin",
+    "ClickableWidgetAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
