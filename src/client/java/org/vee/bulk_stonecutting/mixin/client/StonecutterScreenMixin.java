@@ -23,8 +23,6 @@ public abstract class StonecutterScreenMixin extends HandledScreen<StonecutterSc
     @Unique
     private CheckboxWidget massCraftCheckbox;
     @Unique
-    private ButtonWidget btn;
-    @Unique
     private final int X_OFFSET = -82;
     @Unique
     private final int Y_OFFSET = -96;
@@ -40,9 +38,7 @@ public abstract class StonecutterScreenMixin extends HandledScreen<StonecutterSc
         MinecraftClient client = MinecraftClient.getInstance();
         CheckboxWidget.Builder cbwBuilder = CheckboxWidget.builder(Text.literal("Mass crafting"), client.textRenderer)
                 .checked(ModConfig.isMassCraftCheckEnabled())
-                .callback(((checkbox, checked) -> {
-                    ModConfig.setMassCraftCheckEnabled(checked);
-                }));
+                .callback(((checkbox, checked) -> ModConfig.setMassCraftCheckEnabled(checked)));
         massCraftCheckbox = cbwBuilder.build();
         this.addDrawableChild(massCraftCheckbox);
 
