@@ -50,7 +50,7 @@ public abstract class StonecutterScreenMixin extends AbstractContainerScreen<Sto
     protected void init() {
         super.init();
 
-        Checkbox massCraftCheckbox = Checkbox.builder(Component.literal("Mass crafting"), Minecraft.getInstance().font)
+        Checkbox massCraftCheckbox = Checkbox.builder(Component.literal("Auto Refill"), Minecraft.getInstance().font)
                 .selected(ModConfig.isMassCraftCheckEnabled())
                 .onValueChange((checkbox, selected) -> ModConfig.setMassCraftCheckEnabled(selected))
                 .build();
