@@ -4,6 +4,7 @@
   "package": "org.vee.bulk_stonecutting.mixin.client",
   "compatibilityLevel": "JAVA_25",
   "client": [
+    "CheckboxResizableMixin",
     "StonecutterScreenMixin"
   ],
   "injectors": {

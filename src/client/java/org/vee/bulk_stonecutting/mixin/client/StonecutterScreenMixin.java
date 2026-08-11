@@ -2,6 +2,7 @@ package org.vee.bulk_stonecutting.mixin.client;
 
 import java.util.List;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.StonecutterScreen;
@@ -20,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.vee.bulk_stonecutting.client.ModConfig;
+import org.vee.bulk_stonecutting.client.ResizableCheckbox;
 
 /// Adds a checkbox to the stonecutter gui that can be checked to enable/disable the bulk stone cutting functionality,
 /// and re-places another input stack when the output slot is shift-clicked while it is enabled.
@@ -27,6 +29,9 @@ import org.vee.bulk_stonecutting.client.ModConfig;
 public abstract class StonecutterScreenMixin extends AbstractContainerScreen<StonecutterMenu> {
     @Unique
     private static final int CHECKBOX_GAP = 4;
+    /// Three quarters of the vanilla box size, which is otherwise oversized next to the stonecutter gui.
+    @Unique
+    private static final int CHECKBOX_BOX_SIZE = 13;
     @Unique
     private static final int SLOT_SIZE = 16;
     @Unique
@@ -50,10 +55,17 @@ public abstract class StonecutterScreenMixin extends AbstractContainerScreen<Sto
     protected void init() {
         super.init();
 
-        Checkbox massCraftCheckbox = Checkbox.builder(Component.literal("Auto Refill"), Minecraft.getInstance().font)
+        Font font = Minecraft.getInstance().font;
+        Checkbox massCraftCheckbox = Checkbox.builder(Component.literal("Auto Refill"), font)
                 .selected(ModConfig.isMassCraftCheckEnabled())
                 .onValueChange((checkbox, selected) -> ModConfig.setMassCraftCheckEnabled(selected))
                 .build();
+
+        // The widget sized itself around the vanilla box, so shrink its bounds by however much the box shrank.
+        int boxShrink = Checkbox.getBoxSize(font) - CHECKBOX_BOX_SIZE;
+        ((ResizableCheckbox) massCraftCheckbox).bulk_stonecutting$setBoxSize(CHECKBOX_BOX_SIZE);
+        massCraftCheckbox.setSize(massCraftCheckbox.getWidth() - boxShrink, massCraftCheckbox.getHeight() - boxShrink);
+
         massCraftCheckbox.setPosition(this.leftPos, this.topPos - massCraftCheckbox.getHeight() - CHECKBOX_GAP);
         this.addRenderableWidget(massCraftCheckbox);
     }
@@ -91,6 +103,10 @@ public abstract class StonecutterScreenMixin extends AbstractContainerScreen<Sto
 
         if (bulk_stonecutting$canInventoryAccept(inventory, clickedSlot.getItem())) {
             gameMode.handleContainerInput(containerId, clickedSlot.index, 0, ContainerInput.QUICK_MOVE, player);
+            // The server keeps crafting until the input runs out, but the client stops after one craft because its
+            // result slot stays empty until the server answers. Mirror the emptied input so the refill clicks below
+            // predict the same slots the server will end up with.
+            menu.getSlot(StonecutterMenu.INPUT_SLOT).set(ItemStack.EMPTY);
         } else {
             gameMode.handleContainerInput(containerId, clickedSlot.index, DROP_STACK_BUTTON, ContainerInput.THROW, player);
         }
